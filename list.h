@@ -7,71 +7,10 @@ template <typename T>
 class list
 {
 public:
-
-	template<typename T> struct Node;
 	template <typename T> struct List_iterator;
 	typedef List_iterator<T> Iterator;
 
-	template <typename T>
-	struct List_iterator
-	{
-	public:
-
-		List_iterator(List_iterator<T>* source_iterator) : current_iterator(Node<T>* source_iterator) {};
-		List_iterator() : current_iterator(NULL) { }
-
-		T& operator*()
-		{
-			return current_iterator->data;
-		}
-		Iterator& operator=(List_iterator<T>* source_it)
-		{
-			this->current_iterator = (Node<T>*)source_it;
-			return *this;
-		}
-		bool operator==(List_iterator<T>* source_it) const
-		{
-			return current_iterator == (Node<T>*)source_it;
-		}
-		bool operator<=(List_iterator<T>* source_it) const
-		{
-			return current_iterator <= (Node<T>*)source_it;
-		}
-		bool operator>=(List_iterator<T>* source_it) const
-		{
-			return current_iterator >= (Node<T>*)source_it;
-		}
-		bool operator!=(Node<T>* source_it) const
-		{
-			return current_iterator != source_it;
-		}
-		Iterator& operator++()
-		{
-			current_iterator = current_iterator->pNext;
-			return *this;
-		}
-		Iterator operator++(int)
-		{
-			Iterator it = *this;
-			++* this;
-			return it;
-		}
-		/*Iterator& operator--()
-		{
-			Iterator it = begin();
-			for (; it != current_iterator; it = it->pNext)
-				if (it->pNext == current_iterator)return Iterator&(it);
-		}
-		Iterator operator--(int)
-		{
-			Iterator it = *this;
-			--*this;
-			return it;
-		}*/
-
-	private:
-		Node<T>* current_iterator;
-	};
+	
 
 	list();
 	~list();
@@ -115,6 +54,70 @@ private:
 	size_t size;
 	Node<T>* End;
 	Node<T>* Begin;
+	
+
+	template <typename T>
+	struct List_iterator
+	{
+	public:
+		Node<T>* iBegin = Begin;
+		List_iterator(List_iterator<T>* source_iterator) : current_iterator(Node<T>* source_iterator) {};
+		List_iterator() : current_iterator(NULL) { }
+
+		//typedef List_iterator<T> Iterator;
+
+		T& operator*()
+		{
+			return current_iterator->data;
+		}
+		Iterator& operator=(List_iterator<T>* source_it)
+		{
+			this->current_iterator = (Node<T>*)source_it;
+			return *this;
+		}
+		bool operator==(List_iterator<T>* source_it) const
+		{
+			return current_iterator == (Node<T>*)source_it;
+		}
+		bool operator<=(List_iterator<T>* source_it) const
+		{
+			return current_iterator <= (Node<T>*)source_it;
+		}
+		bool operator>=(List_iterator<T>* source_it) const
+		{
+			return current_iterator >= (Node<T>*)source_it;
+		}
+		bool operator!=(List_iterator<T>* source_it) const
+		{
+			return current_iterator == (Node<T>*)source_it;
+		}
+		Iterator& operator++()
+		{
+			current_iterator = current_iterator->pNext;
+			return *this;
+		}
+		Iterator operator++(int)
+		{
+			Iterator it = *this;
+			++* this;
+			return it;
+		}
+		Iterator& operator--()
+		{
+			Node<T>* it = iBegin;
+			for (; it->pNext != current_iterator; it++)
+				it = it->pNext;
+			current_iterator = it;
+			return (Iterator&)iBegin;
+		}
+		Iterator operator--(int)
+		{
+			
+		}
+
+	private:
+		Node<T>* current_iterator;
+	};
 
 };
 
