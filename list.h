@@ -10,8 +10,6 @@ public:
 	template <typename T> struct List_iterator;
 	typedef List_iterator<T> Iterator;
 
-	
-
 	list();
 	~list();
 
@@ -35,8 +33,8 @@ public:
 	////
 
 	//Geting info//
-	Iterator* begin() { return (Iterator*)Begin; }
-	Iterator* end() { return (Iterator*)End; }
+	Iterator* begin() { return Begin; }
+	Iterator* end() { return End; }
 	bool empty();
 	T front();
 	T back();
@@ -44,52 +42,43 @@ public:
 	T& operator[](const int index);
 	////
 private:
-	template<typename T>
-	struct Node
-	{
-		Node* pNext;
-		T data;
-	};
-
 	size_t size;
-	Node<T>* End;
-	Node<T>* Begin;
-	
-
-	template <typename T>
+	Iterator* End;
+	Iterator* Begin;
+	template<typename T>
 	struct List_iterator
 	{
+		List_iterator* pNext;
+		T data;
 	public:
-		Node<T>* iBegin = Begin;
-		List_iterator(List_iterator<T>* source_iterator) : current_iterator(Node<T>* source_iterator) {};
-		List_iterator() : current_iterator(NULL) { }
 
-		//typedef List_iterator<T> Iterator;
+		List_iterator(Iterator* source_iterator) : current_iterator(source_iterator) {};
+		List_iterator() : current_iterator(NULL) { }
 
 		T& operator*()
 		{
-			return current_iterator->data;
+			return current_iterator->pNext;
 		}
-		Iterator& operator=(List_iterator<T>* source_it)
+		Iterator& operator=(Iterator* source_it)
 		{
-			this->current_iterator = (Node<T>*)source_it;
+			this->current_iterator = source_it;
 			return *this;
 		}
-		bool operator==(List_iterator<T>* source_it) const
+		bool operator==(Iterator* source_it) const
 		{
-			return current_iterator == (Node<T>*)source_it;
+			return current_iterator == source_it;
 		}
-		bool operator<=(List_iterator<T>* source_it) const
+		bool operator<=(Iterator* source_it) const
 		{
-			return current_iterator <= (Node<T>*)source_it;
+			return current_iterator <= source_it;
 		}
-		bool operator>=(List_iterator<T>* source_it) const
+		bool operator>=(Iterator* source_it) const
 		{
-			return current_iterator >= (Node<T>*)source_it;
+			return current_iterator >= source_it;
 		}
-		bool operator!=(List_iterator<T>* source_it) const
+		bool operator!=(Iterator* source_it) const
 		{
-			return current_iterator == (Node<T>*)source_it;
+			return current_iterator == source_it;
 		}
 		Iterator& operator++()
 		{
@@ -104,21 +93,21 @@ private:
 		}
 		Iterator& operator--()
 		{
-			Node<T>* it = iBegin;
+			
+			Iterator* it = Begin;
 			for (; it->pNext != current_iterator; it++)
 				it = it->pNext;
 			current_iterator = it;
-			return (Iterator&)iBegin;
+			return *this;
 		}
-		Iterator operator--(int)
+		/*Iterator operator--(int)
 		{
-			
-		}
+
+		}*/
 
 	private:
-		Node<T>* current_iterator;
+		Iterator* current_iterator;
 	};
-
 };
 
 template<typename T>
@@ -138,7 +127,7 @@ list<T>::~list()
 template<typename T>
 void list<T>::push_back(T data)
 {
-	Node<T>* temp = new Node<T>;
+	Iterator* temp = new Iterator;
 	temp->data = data;
 	temp->pNext = NULL;
 	if (Begin == NULL)
@@ -158,11 +147,11 @@ void list<T>::push_back(T data)
 template <typename T>
 void list<T>::push_back(vector<T> data)
 {
-	Node<T>* temp;
+	Iterator* temp;
 
 	for (int i = 0; i < data.size(); i++)
 	{
-		temp = new Node<T>;
+		temp = new Iterator;
 		temp->data = data[i];
 		temp->pNext = NULL;
 		if (Begin == NULL)
@@ -183,8 +172,8 @@ void list<T>::push_back(vector<T> data)
 template<typename T>
 void list<T>::push_front(T data)
 {
-	Node<T>* temp = Begin;
-	Begin = new Node<T>;
+	Iterator* temp = Begin;
+	Begin = new Iterator;
 	Begin->data = data;
 	Begin->pNext = temp;
 	size++;
@@ -193,7 +182,7 @@ void list<T>::push_front(T data)
 template<typename T>
 void list<T>::pop_front()
 {
-	Node<T>* temp = Begin;
+	Iterator* temp = Begin;
 	Begin = Begin->pNext;
 	delete temp;
 	End = Begin;
@@ -216,15 +205,15 @@ void list<T>::pop_back()
 template<typename T>
 void list<T>::insert(T data, int pos)
 {
-	Node<T>* temp = new Node<T>;
-	Node<T>* temp1 = new Node<T>;
+	Iterator* temp = new Iterator;
+	Iterator* temp1 = new Iterator;
 	if (pos == 0)
 	{
 		push_front(data);
 	}
 	else
 	{
-		Node<T>* previous = this->Begin;
+		Iterator* previous = this->Begin;
 		for (int i = 0; i < pos - 1; i++)
 		{
 			previous = previous->pNext;
@@ -259,8 +248,8 @@ void list<T>::insert(T data, int count, int pos)
 	}
 	else
 	{
-		Node<T>* previous = this->Begin;
-		Node<T>* temp = new Node<T>;
+		Iterator* previous = this->Begin;
+		Iterator* temp = new Iterator;
 		vector<T> sData(count, data);
 
 		for (int i = -1; i < pos - 1; i++)
@@ -302,8 +291,8 @@ void list<T>::insert(vector<int> vec, int pos)
 	}
 	else
 	{
-		Node<T>* previous = this->Begin;
-		Node<T>* temp = new Node<T>;
+		Iterator* previous = this->Begin;
+		Iterator* temp = new Iterator;
 
 		for (int i = -1; i < pos - 1; i++)
 		{
@@ -373,13 +362,13 @@ void list<T>::removeAt(int pos)
 	}
 	else
 	{
-		Node<T>* previous = this->Begin;
+		Iterator* previous = this->Begin;
 		for (int i = 0; i < pos - 1; i++)
 		{
 			previous = previous->pNext;
 		}
 
-		Node<T>* to_delete = previous->pNext;
+		Iterator* to_delete = previous->pNext;
 		previous->pNext = to_delete->pNext;
 		delete to_delete;
 		End = previous;
@@ -417,7 +406,7 @@ template<typename T>
 T& list<T>::operator[](const int index)
 {
 	int counter = 0;
-	Node<T>* current = this->Begin;
+	Iterator* current = this->Begin;
 	while (current != nullptr)
 	{
 		if (counter == index)
