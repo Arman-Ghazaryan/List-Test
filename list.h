@@ -237,21 +237,18 @@ void list<T>::insert(T data, int pos)
 template<typename T>
 void list<T>::insert(T data, int count, int pos)
 {
-	if (pos == 0 || pos == size - 1)
+	if (pos == 0)
 	{
-		if (pos == 0)
+		for (int i = 0; i < count; i++)
 		{
-			for (int i = 0; i < count; i++)
-			{
-				push_front(data);
-			}
+			push_front(data);
 		}
-		if (pos == size - 1)
+	}
+	else	if (pos == size - 1)
+	{
+		for (int i = 0; i < count; i++)
 		{
-			for (int i = 0; i < count; i++)
-			{
-				push_back(data);
-			}
+			push_back(data);
 		}
 	}
 	else
@@ -282,19 +279,16 @@ void list<T>::insert(T data, int count, int pos)
 template<typename T>
 void list<T>::insert(vector<int> vec, int pos)
 {
-	if (pos == 0 || pos == size - 1)
+	if (pos == 0)
 	{
-		if (pos == 0)
+		for (int i = vec.size() - 1; i >= 0; i--)
 		{
-			for (int i = vec.size() - 1; i >= 0; i--)
-			{
-				push_front(vec[i]);
-			}
+			push_front(vec[i]);
 		}
-		if (pos == size - 1)
-		{
-				push_back(vec);
-		}
+	}
+	else if (pos == size - 1)
+	{
+		push_back(vec);
 	}
 	else
 	{
