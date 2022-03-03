@@ -49,6 +49,7 @@ private:
 	struct List_iterator
 	{
 		List_iterator* pNext;
+		List_iterator* pPrev;
 		T data;
 	public:
 
@@ -57,7 +58,7 @@ private:
 
 		T& operator*()
 		{
-			return current_iterator->pNext;
+			return current_iterator->data;
 		}
 		Iterator& operator=(Iterator* source_it)
 		{
@@ -78,7 +79,7 @@ private:
 		}
 		bool operator!=(Iterator* source_it) const
 		{
-			return current_iterator == source_it;
+			return current_iterator != source_it;
 		}
 		Iterator& operator++()
 		{
@@ -93,17 +94,15 @@ private:
 		}
 		Iterator& operator--()
 		{
-			
-			Iterator* it = Begin;
-			for (; it->pNext != current_iterator; it++)
-				it = it->pNext;
-			current_iterator = it;
+			current_iterator = current_iterator->pPrev;
 			return *this;
 		}
-		/*Iterator operator--(int)
+		Iterator operator--(int)
 		{
-
-		}*/
+			Iterator it = *this;
+			--* this;
+			return it;
+		}
 
 	private:
 		Iterator* current_iterator;
@@ -134,12 +133,17 @@ void list<T>::push_back(T data)
 	{
 		Begin = temp;
 		End = temp;
+		Begin->pPrev = Begin;
 		temp = NULL;
 	}
 	else
 	{
 		End->pNext = temp;
 		End = temp;
+		temp = Begin;
+		while (temp->pNext != End)
+			temp = temp->pNext;
+		End->pPrev = temp;
 	}
 	size++;
 }
@@ -158,12 +162,17 @@ void list<T>::push_back(vector<T> data)
 		{
 			Begin = temp;
 			End = temp;
+			Begin->pPrev = Begin;
 			temp = NULL;
 		}
 		else
 		{
 			End->pNext = temp;
 			End = temp;
+			temp = Begin;
+			while (temp->pNext != End)
+				temp = temp->pNext;
+			End->pPrev = temp;
 		}
 	}
 	size += data.size();
@@ -176,6 +185,9 @@ void list<T>::push_front(T data)
 	Begin = new Iterator;
 	Begin->data = data;
 	Begin->pNext = temp;
+	Begin->pPrev = Begin;
+	if (Begin->pNext == nullptr)
+		End = Begin;
 	size++;
 }
 
@@ -184,15 +196,9 @@ void list<T>::pop_front()
 {
 	Iterator* temp = Begin;
 	Begin = Begin->pNext;
+	if (Begin != nullptr)
+		Begin->pPrev = temp->pNext;
 	delete temp;
-	End = Begin;
-	if (End != nullptr)
-	{
-		while (End->pNext != nullptr)
-		{
-			End = End->pNext;
-		}
-	}
 	size--;
 }
 
@@ -222,8 +228,10 @@ void list<T>::insert(T data, int pos)
 		temp->data = data;
 		previous->pNext = temp;
 		temp->pNext = temp1;
+		temp->pPrev = previous;
+		temp1->pPrev = temp;
+		size++;
 	}
-	size++;
 }
 
 template<typename T>
@@ -264,7 +272,9 @@ void list<T>::insert(T data, int count, int pos)
 		push_back(sData);
 
 		End->pNext = previous;
+		previous->pPrev = End;
 		End = temp;
+		End->pPrev = End->pPrev;
 	}
 
 }
@@ -283,10 +293,7 @@ void list<T>::insert(vector<int> vec, int pos)
 		}
 		if (pos == size - 1)
 		{
-			for (int i = 0; i < vec.size(); i++)
-			{
 				push_back(vec);
-			}
 		}
 	}
 	else
@@ -306,7 +313,9 @@ void list<T>::insert(vector<int> vec, int pos)
 		push_back(vec);
 
 		End->pNext = previous;
+		previous->pPrev = End;
 		End = temp;
+		End->pPrev = End->pPrev;
 	}
 }
 
@@ -370,12 +379,9 @@ void list<T>::removeAt(int pos)
 
 		Iterator* to_delete = previous->pNext;
 		previous->pNext = to_delete->pNext;
+		to_delete->pPrev = previous;
 		delete to_delete;
-		End = previous;
-		while(End->pNext != nullptr)
-		{ 
-			End = End->pNext;
-		}
+		End = End->pPrev;
 	}
 	size--;
 }
@@ -383,7 +389,7 @@ void list<T>::removeAt(int pos)
 template<typename T>
 bool list<T>::empty()
 {
-	if (Begin == End)
+	if (Begin == nullptr)
 	{
 		return 0;
 	}
