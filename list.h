@@ -479,7 +479,7 @@ void list<T>::insert(vector<int> vec, Iterator pos)
 
 	if (temp == Begin)
 	{
-		for (int i = count - 1; i > -1; i++)
+		for (int i = vec.size() - 1; i > -1; i++)
 		{
 			push_front(vec[i]);
 		}
@@ -490,7 +490,7 @@ void list<T>::insert(vector<int> vec, Iterator pos)
 	}
 	else
 	{
-		for (int i = count - 1; i > -1; i++)
+		for (int i = vec.size() - 1; i > -1; i++)
 		{
 			Iterator* temp1 = new Iterator;
 			temp1->data = vec[i];
