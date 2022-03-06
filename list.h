@@ -22,10 +22,11 @@ public:
 	void push_front(T data);
 	void insert(T data, int pos);
 	void insert(T data, int count, int pos);
-	void insert(vector<int> vec, int pos);
+	void insert(vector<T> vec, int pos);
 	void insert(T data, Iterator pos);
 	void insert(T data, int count, Iterator pos);
-	void insert(vector<int> vec, Iterator pos); 
+	void insert(vector<T> vec, Iterator pos); 
+	void insert(Iterator secfpos, Iterator seclpos, Iterator pos);
 	////
 
 	//Removing
@@ -353,7 +354,7 @@ void list<T>::insert(T data, int count, int pos)
 		Iterator* temp = new Iterator;
 		vector<T> sData(count, data);
 
-		for (int i = -1; i < pos - 1; i++)
+		for (int i = 0; i < pos - 1; i++)
 		{
 			previous = previous->pNext;
 		}
@@ -373,7 +374,7 @@ void list<T>::insert(T data, int count, int pos)
 }
 
 template<typename T>
-void list<T>::insert(vector<int> vec, int pos)
+void list<T>::insert(vector<T> vec, int pos)
 {
 	if (pos == 0)
 	{
@@ -391,7 +392,7 @@ void list<T>::insert(vector<int> vec, int pos)
 		Iterator* previous = this->Begin;
 		Iterator* temp = new Iterator;
 
-		for (int i = -1; i < pos - 1; i++)
+		for (int i = 0; i < pos - 1; i++)
 		{
 			previous = previous->pNext;
 		}
@@ -472,7 +473,7 @@ void list<T>::insert(T data, int count, Iterator pos)
 }
 
 template<typename T>
-void list<T>::insert(vector<int> vec, Iterator pos)
+void list<T>::insert(vector<T> vec, Iterator pos)
 {
 	Iterator* temp = &pos;
 	temp = temp->current_iterator;
@@ -502,6 +503,42 @@ void list<T>::insert(vector<int> vec, Iterator pos)
 		}
 		size += vec.size();
 	}
+}
+
+template<typename T>
+void list<T>::insert(Iterator secfpos, Iterator seclpos, Iterator pos)
+{
+	Iterator* fpos = &secfpos;
+	Iterator* lpos = &seclpos;
+	Iterator* currpos = &pos;
+	fpos = fpos->current_iterator;
+	lpos = lpos->current_iterator;
+	currpos = currpos->current_iterator;
+	int count = 1;
+
+	for (Iterator* it = fpos; it != lpos; it = it->pNext)
+		count++;
+
+	if (currpos == Begin)
+	{
+		lpos->pNext = Begin;
+		Begin->pPrev = lpos;
+		Begin = fpos;
+	}
+	else if (currpos == End)
+	{
+		fpos->pPrev = End;
+		End->pNext = fpos;
+		End = lpos;
+	}
+	else
+	{
+		currpos->pPrev->pNext = fpos;
+		fpos->pPrev = currpos->pPrev;
+		currpos->pPrev = lpos;
+		lpos->pNext = currpos;
+	}
+	size += count;
 }
 
 template<typename T>
