@@ -11,18 +11,21 @@ public:
 	typedef List_iterator<T> Iterator;
 
 	list();
+	list(int count, T data);
+	list(int count);
+	list(vector<T> data);
 	~list();
 
 	//Adding elements//
 	void push_back(T data);
-	void push_back(vector<T> data);
+	void push_back(vector<T> vec);
 	void push_front(T data);
 	void insert(T data, int pos);
 	void insert(T data, int count, int pos);
 	void insert(vector<int> vec, int pos);
-	/*void insert(T data, Iterator pos);
+	void insert(T data, Iterator pos);
 	void insert(T data, int count, Iterator pos);
-	void insert(vector<int> vec, Iterator pos);*/
+	void insert(vector<int> vec, Iterator pos); 
 	////
 
 	//Removing
@@ -30,6 +33,8 @@ public:
 	void removeAt(int pos);
 	void pop_front();
 	void pop_back();
+	void erase(Iterator pos);
+	void erase(Iterator fpos, Iterator lpos);
 	////
 
 	//Geting info//
@@ -48,6 +53,7 @@ private:
 	template<typename T>
 	struct List_iterator
 	{
+		Iterator* current_iterator;
 		List_iterator* pNext;
 		List_iterator* pPrev;
 		T data;
@@ -68,14 +74,6 @@ private:
 		bool operator==(Iterator* source_it) const
 		{
 			return current_iterator == source_it;
-		}
-		bool operator<=(Iterator* source_it) const
-		{
-			return current_iterator <= source_it;
-		}
-		bool operator>=(Iterator* source_it) const
-		{
-			return current_iterator >= source_it;
 		}
 		bool operator!=(Iterator* source_it) const
 		{
@@ -103,9 +101,6 @@ private:
 			--* this;
 			return it;
 		}
-
-	private:
-		Iterator* current_iterator;
 	};
 };
 
@@ -115,6 +110,30 @@ list<T>::list()
 	size = 0;
 	End = nullptr;
 	Begin = nullptr;
+}
+
+template<typename T>
+list<T>::list(int count, T data)
+{
+	for (int i = 0; i < count; i++)
+	{
+		push_back(data);
+	}
+}
+
+template<typename T>
+list<T>::list(int count)
+{
+	for (int i = 0; i < count; i++)
+	{
+		push_back(0);
+	}
+}
+
+template<typename T>
+list<T>::list(vector<T> data)
+{
+	push_back(data);
 }
 
 template<typename T>
@@ -149,14 +168,14 @@ void list<T>::push_back(T data)
 }
 
 template <typename T>
-void list<T>::push_back(vector<T> data)
+void list<T>::push_back(vector<T> vec)
 {
 	Iterator* temp;
 
-	for (int i = 0; i < data.size(); i++)
+	for (int i = 0; i < vec.size(); i++)
 	{
 		temp = new Iterator;
-		temp->data = data[i];
+		temp->data = vec[i];
 		temp->pNext = NULL;
 		if (Begin == NULL)
 		{
@@ -168,14 +187,11 @@ void list<T>::push_back(vector<T> data)
 		else
 		{
 			End->pNext = temp;
+			temp->pPrev = End;
 			End = temp;
-			temp = Begin;
-			while (temp->pNext != End)
-				temp = temp->pNext;
-			End->pPrev = temp;
 		}
 	}
-	size += data.size();
+	size += vec.size();
 }
 
 template<typename T>
@@ -198,6 +214,11 @@ void list<T>::pop_front()
 	Begin = Begin->pNext;
 	if (Begin != nullptr)
 		Begin->pPrev = temp->pNext;
+	if (size == 1)
+	{
+		Begin = nullptr;
+		End = nullptr;
+	}
 	delete temp;
 	size--;
 }
@@ -205,7 +226,82 @@ void list<T>::pop_front()
 template<typename T>
 void list<T>::pop_back()
 {
-	removeAt(size - 1);
+	Iterator* temp = End;
+	if (End != Begin)
+	{
+		End = End->pPrev;
+		End->pNext = nullptr;
+	}
+	else
+	{
+		End = nullptr;
+		Begin = nullptr;
+	}
+	delete temp;
+	size--;
+}
+
+template<typename T>
+void list<T>::erase(Iterator pos)
+{
+	Iterator* temp = &pos;
+	temp = temp->current_iterator;
+	if (temp == Begin)
+	{
+		pop_front();
+	}
+	else if (temp == End)
+	{
+		pop_back();
+	}
+	else {
+		temp = temp->pPrev;
+		Iterator* to_delete = temp->pNext;
+		temp->pNext = to_delete->pNext;
+		to_delete->pNext->pPrev = temp;
+		delete to_delete;
+		size--;
+	}
+}
+
+template<typename T>
+void list<T>::erase(Iterator fpos, Iterator lpos)
+{
+	Iterator* temp = &fpos;
+	Iterator* temp1 = &lpos;
+	temp = temp->current_iterator;
+	temp1 = temp1->current_iterator;
+	if (temp == Begin)
+	{
+		while (temp1 != Begin)
+		{
+			pop_front();
+		}
+		pop_front();
+	}
+	else if (temp1 == End)
+	{
+		while (temp != End)
+		{
+			pop_back();
+		}
+		pop_back();
+	}
+	else {
+		Iterator* to_delete;
+		Iterator* next_delete = temp;
+		temp1 = temp1->pNext;
+		temp = temp->pPrev;
+		for (; next_delete != temp1; )
+		{
+			to_delete = next_delete;
+			next_delete = next_delete->pNext;
+			delete to_delete;
+			size--;
+		}
+		temp->pNext = temp1;
+		temp1->pPrev = temp;
+	}
 }
 
 template<typename T>
@@ -313,39 +409,100 @@ void list<T>::insert(vector<int> vec, int pos)
 	}
 }
 
-//template<typename T>
-//void list<T>::insert(T data, Iterator pos)
-//{
-//	Node<T>* temp = new Node<T>;
-//	Node<T>* temp1 = new Node<T>;
-//	if (pos == 0)
-//	{
-//		push_front(data);
-//	}
-//	else
-//	{
-//		/*Node<T>* previous = this->Begin;
-//		for (int i = 0; i < pos - 1; i++)
-//		{
-//			previous = previous->pNext;
-//		}*/
-//		temp1 = pos;
-//		temp->data = data;
-//		previous->pNext = temp;
-//		temp->pNext = temp1;
-//	}
-//	size++;
-//}
-//
-//template<typename T>
-//void list<T>::insert(T data, int count, Iterator pos)
-//{
-//}
-//
-//template<typename T>
-//void list<T>::insert(vector<int> vec, Iterator pos)
-//{
-//}
+template<typename T>
+void list<T>::insert(T data, Iterator pos)
+{
+	Iterator* temp = &pos;
+	temp = temp->current_iterator;
+
+	if (temp == Begin)
+	{
+		push_front(data);
+	}
+	else if (temp == End)
+	{
+		push_back(data);
+	}
+	else
+	{
+		Iterator* temp1 = new Iterator;
+		temp1->data = data;
+		temp1->pNext = temp;
+		temp1->pPrev = temp->pPrev;
+		temp->pPrev->pNext = temp1;
+		temp->pPrev = temp1;
+		size++;
+	}
+}
+
+template<typename T>
+void list<T>::insert(T data, int count, Iterator pos)
+{
+	Iterator* temp = &pos;
+	temp = temp->current_iterator;
+
+	if (temp == Begin)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			push_front(data);
+		}
+	}
+	else if (temp == End)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			push_back(data);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < count; i++)
+		{
+			Iterator* temp1 = new Iterator;
+			temp1->data = data;
+			temp1->pNext = temp;
+			temp1->pPrev = temp->pPrev;
+			temp->pPrev->pNext = temp1;
+			temp->pPrev = temp1;
+			temp = temp1;
+			size++;
+		}
+	}
+}
+
+template<typename T>
+void list<T>::insert(vector<int> vec, Iterator pos)
+{
+	Iterator* temp = &pos;
+	temp = temp->current_iterator;
+
+	if (temp == Begin)
+	{
+		for (int i = count - 1; i > -1; i++)
+		{
+			push_front(vec[i]);
+		}
+	}
+	else if (temp == End)
+	{
+		push_back(vec);
+	}
+	else
+	{
+		for (int i = count - 1; i > -1; i++)
+		{
+			Iterator* temp1 = new Iterator;
+			temp1->data = vec[i];
+			temp1->pNext = temp;
+			temp1->pPrev = temp->pPrev;
+			temp->pPrev->pNext = temp1;
+			temp->pPrev = temp1;
+			temp = temp1;
+		}
+		size += vec.size();
+	}
+}
 
 template<typename T>
 void list<T>::clear()
@@ -363,6 +520,10 @@ void list<T>::removeAt(int pos)
 	{
 		pop_front();
 	}
+	else if (pos == size - 1)
+	{
+		pop_back();
+	}
 	else
 	{
 		Iterator* previous = this->Begin;
@@ -375,7 +536,6 @@ void list<T>::removeAt(int pos)
 		previous->pNext = to_delete->pNext;
 		to_delete->pPrev = previous;
 		delete to_delete;
-		End = End->pPrev;
 	}
 	size--;
 }
