@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "..\Link-List\list.h" //You must to include your list.h with his location
+#include "..\Link-List\list.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -94,6 +94,8 @@ namespace UnitTest1
 
 			lst.clear();
 			Assert::IsTrue(lst.getSize() == 0, L"clear() unsuccess");
+			Assert::IsTrue(lst.begin() == NULL, L"after_clear_begin unsuccess");
+			Assert::IsTrue(lst.end() == NULL, L"after_clear_end unsuccess");
 		}
 		TEST_METHOD(Insert)
 		{
