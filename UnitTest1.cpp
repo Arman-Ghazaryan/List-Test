@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "..\Link-List\list.h"
+#include "..\Link-List\list.h" //You must to include your list.h with his location
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -13,14 +13,18 @@ namespace UnitTest1
 		{ 
 			list<int> lst;
 			list<int>::Iterator it;
-			Assert::IsTrue(lst.begin() == NULL);
-			Assert::IsTrue(lst.end() == NULL);
-			Assert::IsTrue(lst.getSize() == 0);
-			Assert::IsTrue(it == NULL);
+			Assert::IsTrue(lst.begin() == NULL, L"begin() unsuccess");
+			Assert::IsTrue(lst.end() == NULL, L"end() unsuccess");
+			Assert::IsTrue(lst.getSize() == 0, L"getSize() unsuccess");
+			Assert::IsTrue(it == NULL, L"Iterator() unsuccess");
+			Assert::AreEqual(lst.empty(), false, L"empty() unsuccess");
 			
 			list<int> lst1(3);
 			list<int> lst2(3, 7);
 			list<int> lst3({ 0,1,2 });
+
+			Assert::IsTrue(lst3.front() == 0, L"front() unsuccess");
+			Assert::IsTrue(lst3.back() == 2, L"fback() unsuccess");
 
 			for (int i = 0; i < lst1.getSize(); i++)
 			{
@@ -29,47 +33,12 @@ namespace UnitTest1
 				Assert::AreEqual(lst3[i], i, L"list(vector) unsuccess");
 			}
 		}
-		TEST_METHOD(Functions)
+		TEST_METHOD(Removing_Functions)
 		{
-			list<int> lst;
-			list<int>::Iterator it;
-			lst.push_back(0);
-			Assert::AreEqual(lst.back(), 0, L"push_back(data) unsuccess");
-			lst.push_back({ 1,2,3 });
-			int i = 1;
-			for (it = lst.begin(); it != lst.end(); i++)
-			{
-				it++;
-				Assert::AreEqual(*it, i, L"push_back(vector) unsuccess");
-			}
-			lst.push_front(1);
-			Assert::AreEqual(lst.front(), 1, L"push_front(data) unsuccess");
+			list<int> lst(3, 3);
+			vector<int> vec = { 12,35,2,4,35,0,12,35,15,345,355,1,2,3,5,9,6,89,52,34,8 };
+			list<int>::Iterator it1, it2;
 
-			Assert::AreEqual(lst[0], 1, L"operator[] unsuccess");
-			Assert::AreEqual(lst.front(), 1, L"front() unsuccess");
-			Assert::AreEqual(lst.back(), 3, L"back() unsuccess");
-
-			lst.insert(4, 3);
-			Assert::AreEqual(lst[3], 4, L"insert(data, position) unsuccess");
-
-			Assert::AreEqual(lst.getSize(), 6, L"getSize() unsuccess");
-
-			lst.clear();
-			Assert::IsTrue(lst.getSize() == 0, L"clear() unsuccess");
-
-			lst.insert({ 0,1,2 }, 0);
-			for (i = 0; i < 3; i++)
-			{
-				Assert::AreEqual(lst[i], i, L"insert(vector, position) unsuccess");
-			}
-
-			lst.clear();
-			lst.insert(3, 3, 0);
-			it = lst.begin();
-			for (int i = 0; i < 3; i++, it++)
-			{
-				Assert::AreEqual(*it, 3, L"insert(data, count, position) unsuccess");
-			}
 
 			lst.removeAt(1);
 			Assert::IsTrue(lst.getSize() == 2, L"removeAt() unsuccess");
@@ -79,8 +48,52 @@ namespace UnitTest1
 
 			lst.pop_front();
 			Assert::IsTrue(lst.getSize() == 0, L"pop_front() unsuccess");
-			
-			Assert::AreEqual(lst.empty(), false, L"empty() unsuccess");
+
+			lst.push_back(vec);
+			it1 = lst.begin();
+			it2 = lst.end();
+			it1++;
+			it2--;
+			lst.erase(lst.begin());
+			lst.erase(lst.end());
+
+			Assert::IsTrue(lst.getSize() == vec.size() - 2, L"erase_begin_end_size unsuccess");
+			Assert::IsTrue(lst.front() == *it1, L"after_erase_begin_data unsuccess");
+			Assert::IsTrue(lst.back() == *it2, L"after_erase_end_data unsuccess");
+			Assert::IsTrue(lst.begin() == it1.current_iterator, L"after_erase_begin_address unsuccess");
+			Assert::IsTrue(lst.end() == it2.current_iterator, L"after_erase_end_address unsuccess");
+
+			while (*it2 != 3)
+				--it2;
+			while (*it1 != 0)
+				++it1;
+			--it1;
+			++it2;
+
+			lst.erase(lst.begin(), it1);
+			lst.erase(it2, lst.end());
+
+			it1 = lst.begin();
+			it2 = lst.end();
+
+			while (*it2 != 355)
+				--it2;
+			++it1;
+
+			lst.erase(it1, it2);
+			for (int i = 0; i < lst.getSize(); i++)
+			{
+				Assert::AreEqual(lst[i], i, L"Erase from [begin,end] [begin, lastPos] [firstPos, end] [firstPos, lastPos] unsuccess");
+			}
+
+			lst.erase(lst.begin(), lst.end());
+			Assert::AreEqual(lst.getSize(), 0, L"Erase from [begin,end] unsuccess");
+
+			lst.push_back(vec);
+			Assert::IsTrue(lst.getSize() != 0);
+
+			lst.clear();
+			Assert::IsTrue(lst.getSize() == 0, L"clear() unsuccess");
 		}
 		TEST_METHOD(Insert)
 		{
@@ -141,6 +154,65 @@ namespace UnitTest1
 					Assert::AreEqual(lst[j + 1], i, L"insert from middle unsuccess");
 				}
 				k = j;
+			}
+
+			lst.insert(lst1.begin(), lst1.end(), lst.begin());
+			for (int i = 0; i < lst1.getSize(); i++)
+			{
+				Assert::AreEqual(lst[i], i + 1, L"insert into begin from another list unsuccess");
+			}
+
+			it = lst.end();
+			lst.insert(lst1.begin(), lst1.end(), lst.end());
+			it++;
+			for (int i = 1;it != lst.end(); it++, i++)
+			{
+				Assert::AreEqual(*it, i , L"insert into end from another list unsuccess");
+			}
+
+			it = lst.begin();
+			it++;
+			lst.insert(lst1.begin(), lst1.end(), it);
+			for (int i = 1; i <= lst1.getSize(); i++)
+			{
+				Assert::AreEqual(lst[i], i, L"insert into end from another list unsuccess");
+			}
+		}
+		TEST_METHOD(Push_front_back)
+		{
+			list<int> lst;
+			list<int>::Iterator it;
+			vector<int> vec = {0,1,2,3,4};
+			int size;
+
+			for (int i = 1; i < 5; i++)
+			{
+				lst.push_back(i);
+				lst.push_front(i);
+			}
+
+			Assert::IsTrue(lst.getSize() == 8, L"Push_front_back size unsuccess");
+
+			size = lst.getSize();
+
+			for (int i = 0; i < size / 2; i++)
+			{
+				Assert::AreEqual(lst[i], size / 2 - i, L"push_front(data) unsuccess");
+				Assert::AreEqual(lst[size - i - 1], size / 2 - i, L"push_back(data) unsuccess");
+			}
+
+			it = lst.end();
+
+			lst.push_back(vec);
+			lst.push_front(vec);
+
+			Assert::IsTrue(lst.getSize() == size + vec.size() * 2, L"Push_front_back_vector size unsuccess");
+
+			for (int i = 0; i < vec.size(); i++)
+			{
+				it++;
+				Assert::AreEqual(lst[i], i, L"push_front(vector) unsuccess");
+				Assert::AreEqual(*it, i, L"push_back(vector) unsuccess");
 			}
 		}
 	};
