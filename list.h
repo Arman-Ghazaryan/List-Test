@@ -13,20 +13,20 @@ public:
 	list();
 	list(int count, T data);
 	list(int count);
-	list(vector<T> data);
+	list(vector<T> const& data);
 	~list();
 
 	//Adding elements//
 	void push_back(T data);
-	void push_back(vector<T> vec);
+	void push_back(vector<T> const& vec);
 	void push_front(T data);
 	void push_front(vector<T> const& vec);
 	void insert(T data, int pos);
 	void insert(T data, int count, int pos);
-	void insert(vector<T> vec, int pos);
+	void insert(vector<T> const& vec, int pos);
 	void insert(T data, Iterator pos);
 	void insert(T data, int count, Iterator pos);
-	void insert(vector<T> vec, Iterator pos); 
+	void insert(vector<T> const& vec, Iterator pos);
 	void insert(Iterator secfpos, Iterator seclpos, Iterator pos);
 	////
 
@@ -142,7 +142,7 @@ list<T>::list(int count)
 }
 
 template<typename T>
-list<T>::list(vector<T> data)
+list<T>::list(vector<T> const& data)
 {
 	push_back(data);
 }
@@ -175,7 +175,7 @@ void list<T>::push_back(T data)
 }
 
 template <typename T>
-void list<T>::push_back(vector<T> vec)
+void list<T>::push_back(vector<T> const& vec)
 {
 	for (int i = 0; i < vec.size(); i++)
 	{
@@ -374,7 +374,7 @@ void list<T>::insert(T data, int count, int pos)
 }
 
 template<typename T>
-void list<T>::insert(vector<T> vec, int pos)
+void list<T>::insert(vector<T> const& vec, int pos)
 {
 	if (pos == 0)
 	{
@@ -473,7 +473,7 @@ void list<T>::insert(T data, int count, Iterator pos)
 }
 
 template<typename T>
-void list<T>::insert(vector<T> vec, Iterator pos)
+void list<T>::insert(vector<T> const& vec, Iterator pos)
 {
 	Iterator* temp = &pos;
 	temp = temp->current_iterator;
