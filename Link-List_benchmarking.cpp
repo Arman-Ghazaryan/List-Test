@@ -90,37 +90,37 @@ int main()
 	}
 
 	
-	cout << "insert(data, integer position 0" << endl;
+	cout << "insert(data, integer position 0)" << endl;
 	{
 		timer time;
 		lst.insert(1, 0);
 	}
 
-	cout << "insert(data, iterator position begin" << endl;
+	cout << "insert(data, iterator position begin)" << endl;
 	{
 		timer time;
 		lst.insert(1, lst.begin());
 	}
 
-	cout << "insert(data, count, integer position 0" << endl;
+	cout << "insert(data, count, integer position 0)" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, 0);
 	}
 
-	cout << "insert(data, count, iterator position begin" << endl;
+	cout << "insert(data, count, iterator position begin)" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, lst.begin());
 	}
 
-	cout << "insert(vector, integer position 0" << endl;
+	cout << "insert(vector, integer position 0)" << endl;
 	{
 		timer time;
 		lst.insert(vec, 0);
 	}
 
-	cout << "insert(vector, iterator position begin" << endl;
+	cout << "insert(vector, iterator position begin)" << endl;
 	{
 		timer time;
 		lst.insert(vec, lst.begin());
@@ -130,37 +130,37 @@ int main()
 	lst.clear();
 	//
 
-	cout << "insert(data, integer position 0" << endl;
+	cout << "insert(data, integer position 0)" << endl;
 	{
 		timer time;
 		lst.insert(1, 0);
 	}
 
-	cout << "insert(data, iterator position end" << endl;
+	cout << "insert(data, iterator position end)" << endl;
 	{
 		timer time;
 		lst.insert(1, lst.end());
 	}
 
-	cout << "insert(data, count, integer position 1(end)" << endl;
+	cout << "insert(data, count, integer position 1(end))" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, 1);
 	}
 
-	cout << "insert(data, count, iterator position end" << endl;
+	cout << "insert(data, count, iterator position end)" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, lst.end());
 	}
 
-	cout << "insert(vector, integer position 5(end)" << endl;
+	cout << "insert(vector, integer position 5(end))" << endl;
 	{
 		timer time;
 		lst.insert(vec, 5);
 	}
 
-	cout << "insert(vector, iterator position end" << endl;
+	cout << "insert(vector, iterator position end)" << endl;
 	{
 		timer time;
 		lst.insert(vec, lst.end());
@@ -168,7 +168,7 @@ int main()
 	///
 
 	///
-	cout << "insert(data, integer position 0" << endl;
+	cout << "insert(data, integer position 0)" << endl;
 	{
 		timer time;
 		lst.insert(1, 0);
@@ -177,13 +177,13 @@ int main()
 	it = lst.begin();
 	it++;
 
-	cout << "insert(data, iterator position" << endl;
+	cout << "insert(data, iterator position)" << endl;
 	{
 		timer time;
 		lst.insert(1, it);
 	}
 
-	cout << "insert(data, count, integer position 1(middle)" << endl;
+	cout << "insert(data, count, integer position 1(middle))" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, 1);
@@ -192,13 +192,13 @@ int main()
 	it = lst.begin();
 	it++;
 
-	cout << "insert(data, count, iterator position" << endl;
+	cout << "insert(data, count, iterator position)" << endl;
 	{
 		timer time;
 		lst.insert(2, 2, it);
 	}
 
-	cout << "insert(vector, integer position 1(middle)" << endl;
+	cout << "insert(vector, integer position 1(middle))" << endl;
 	{
 		timer time;
 		lst.insert(vec, 1);
@@ -207,7 +207,7 @@ int main()
 	it = lst.begin();
 	it++;
 
-	cout << "insert(vector, iterator position" << endl;
+	cout << "insert(vector, iterator position)" << endl;
 	{
 		timer time;
 		lst.insert(vec, it);
@@ -215,14 +215,14 @@ int main()
 	///
 	
 	/// 
-	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(begin)" << endl;
+	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(begin))" << endl;
 	{
 		timer time;
 		lst.insert(lst2.begin(), lst2.end(), lst.begin());
 	}
 
 
-	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(end)" << endl;
+	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(end))" << endl;
 	{
 		timer time;
 		lst.insert(lst2.begin(), lst2.end(), lst.end());
@@ -231,7 +231,7 @@ int main()
 	it = lst.begin();
 	it++;
 
-	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(middle)" << endl;
+	cout << "insert(iterator secfpos, iterator seclpos, iterator pos(middle))" << endl;
 	{
 		timer time;
 		lst.insert(lst2.begin(), lst2.end(), it);
@@ -245,13 +245,13 @@ int main()
 	for (int i = 0; i < 250; i++, it1++);
 	for (int i = lst.getSize(); i >= lst.getSize() - 250; i--, it2--);
 
-	cout << "erase(iterator fpos(begin), iterator lpos" << endl;
+	cout << "erase(iterator fpos(begin), iterator lpos)" << endl;
 	{
 		timer time;
 		lst.erase(lst.begin(), it1);
 	}
 
-	cout << "erase(iterator fpos, iterator lpos(end)" << endl;
+	cout << "erase(iterator fpos, iterator lpos(end))" << endl;
 	{
 		timer time;
 		lst.erase(it2, lst.end());
