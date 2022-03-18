@@ -73,6 +73,12 @@ public:
 	list(int count, T data);
 	list(int count);
 	list(vector<T> const &data);
+	list(const list &lst)
+	{
+		lst.Begin = Begin;
+		lst.End = End;
+		lst.size = size;
+	}
 	~list();
 
 	// Adding elements//
