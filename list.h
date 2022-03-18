@@ -73,12 +73,7 @@ public:
 	list(int count, T data);
 	list(int count);
 	list(vector<T> const &data);
-	list(const list &lst)
-	{
-		lst.Begin = Begin;
-		lst.End = End;
-		lst.size = size;
-	}
+	list(const list<T> &lst);
 	~list();
 
 	// Adding elements//
@@ -158,6 +153,31 @@ list<T>::list(int count)
 	{
 		push_back(0);
 	}
+}
+
+template <typename T>
+list<T>::list(const list<T> &lst)
+{
+	Iterator *fpos = lst.Begin;
+	Iterator *temp = new Iterator;
+	Begin = temp;
+	Begin->data = fpos->data;
+	Begin->pPrev = Begin;
+	End = Begin;
+	for (; fpos != lst.End;)
+	{
+		fpos = fpos->pNext;
+		temp = new Iterator;
+		temp->data = fpos->data;
+		End->pNext = temp;
+		End = temp;
+		temp = Begin;
+		while (temp->pNext != End)
+			temp = temp->pNext;
+		End->pPrev = temp;
+	}
+	End->pNext = nullptr;
+	size = lst.size;
 }
 
 template <typename T>
