@@ -115,12 +115,17 @@ public:
 	T front();
 	T back();
 	int getSize() { return size; }
+
+	// operators
+	list<T> &operator=(const list<T> &lst);
 	T &operator[](const int index);
 	////
 private:
 	size_t size;
 	Iterator *End;
 	Iterator *Begin;
+
+	void push_back_(T data);
 };
 
 template <typename T>
@@ -168,15 +173,8 @@ list<T>::list(const list<T> &lst)
 	{
 		fpos = fpos->pNext;
 		temp = new Iterator;
-		temp->data = fpos->data;
-		End->pNext = temp;
-		End = temp;
-		temp = Begin;
-		while (temp->pNext != End)
-			temp = temp->pNext;
-		End->pPrev = temp;
+		push_back_(fpos->data);
 	}
-	End->pNext = nullptr;
 	size = lst.size;
 }
 
@@ -198,22 +196,31 @@ list<T>::~list()
 template <typename T>
 void list<T>::push_back(T data)
 {
-	Iterator *temp = new Iterator;
-	temp->data = data;
-	temp->pNext = NULL;
 	if (Begin == nullptr)
 	{
+		Iterator *temp = new Iterator;
+		temp->data = data;
+		temp->pNext = NULL;
 		Begin = temp;
 		End = temp;
 		Begin->pPrev = Begin;
 	}
 	else
 	{
-		End->pNext = temp;
-		temp->pPrev = End;
-		End = temp;
+		push_back_(data);
 	}
 	size++;
+}
+
+template <typename T>
+void list<T>::push_back_(T data)
+{
+	Iterator *temp = new Iterator;
+	temp->data = data;
+	temp->pNext = NULL;
+	End->pNext = temp;
+	temp->pPrev = End;
+	End = temp;
 }
 
 template <typename T>
@@ -578,11 +585,8 @@ void list<T>::insert(Iterator secfpos, Iterator seclpos, Iterator pos)
 		temp = new Iterator;
 		temp->data = fpos->data;
 		end->pNext = temp;
+		temp->pPrev = end;
 		end = temp;
-		temp = beg;
-		while (temp->pNext != end)
-			temp = temp->pNext;
-		end->pPrev = temp;
 	}
 	end->pNext = nullptr;
 
@@ -682,6 +686,12 @@ template <typename T>
 T list<T>::back()
 {
 	return End->data;
+}
+
+template<typename T> 
+list<T> &list<T>::operator=(const list<T> &lst)
+{
+	list(lst);
 }
 
 template <typename T>
