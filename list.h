@@ -758,6 +758,7 @@ T list<T>::back()
 template<typename T>
 void list<T>::operator=(const list<T>& lst)
 {
+	clear();
 	Iterator* fpos = lst.Begin;
 	Iterator* temp = new Iterator;
 	Begin = temp;
